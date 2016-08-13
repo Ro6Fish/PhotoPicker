@@ -9,10 +9,10 @@ import com.facebook.drawee.view.SimpleDraweeView;
 
 import butterknife.InjectView;
 import butterknife.OnClick;
+import me.rokevin.lib.photopicker.util.PhotoPickUtil;
+import me.rokevin.lib.photopicker.util.SDUtil;
+import me.rokevin.lib.photopicker.widget.dialog.PhotoPickerDialog;
 import me.rokevin.photopicker.R;
-import me.rokevin.photopicker.component.util.PhotoPickUtil;
-import me.rokevin.photopicker.component.util.SDUtil;
-import me.rokevin.photopicker.component.widget.dialog.PhotoPickerDialog;
 
 public class MainActivity extends BaseActivity {
 

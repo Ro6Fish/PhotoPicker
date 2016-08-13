@@ -1,11 +1,11 @@
-package me.rokevin.photopicker.component.widget.dialog;
+package me.rokevin.lib.photopicker.widget.dialog;
 
 import android.content.Context;
 import android.view.View;
 import android.widget.Button;
 
-import me.rokevin.photopicker.R;
-import me.rokevin.photopicker.component.util.Util;
+import me.rokevin.lib.photopicker.R;
+import me.rokevin.lib.photopicker.util.Util;
 
 /**
  * Created by luokaiwen on 15/5/28.

@@ -1,4 +1,4 @@
-package me.rokevin.photopicker.component.util;
+package me.rokevin.lib.photopicker.util;
 
 import android.os.Build;
 
