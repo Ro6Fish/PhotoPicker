@@ -1,0 +1,42 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <!-- 重写系统弹出Dialog -->
+    <style name="DialogTheme" parent="@android:style/Theme.Dialog">
+
+        <!--边框-->
+        <item name="android:windowFrame">@null</item>
+        <!--是否浮现在activity之上 如果为false Dialog整体透明-->
+        <item name="android:windowIsFloating">false</item>
+        <!--半透明-->
+        <item name="android:windowIsTranslucent">true</item>
+        <!-- 除去title -->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <!-- 模糊 配合 windowIsFloating 此项如果为true 则不显示透明效果 如果此项为false 则显示透明效果-->
+        <item name="android:backgroundDimEnabled">true</item>
+        <!-- 除去对话框黑色背景色 -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+
+    </style>
+
+    <!-- 横线 -->
+    <style name="LineHorizontal">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0.3dp</item>
+        <item name="android:background">#E1E1E1</item>
+    </style>
+
+    <style name="AnimPhotoPicker" parent="android:Animation">
+        <item name="@android:windowEnterAnimation">@anim/dialog_photo_picker_enter</item>
+        <item name="@android:windowExitAnimation">@anim/dialog_photo_picker_exit</item>
+    </style>
+
+</resources>
