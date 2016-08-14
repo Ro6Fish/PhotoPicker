@@ -72,7 +72,7 @@ public abstract class BaseDialog {
     /**
      * 构造函数
      *
-     * @param context
+     * @param context 上下文
      */
     protected BaseDialog(Context context) {
 
@@ -83,7 +83,7 @@ public abstract class BaseDialog {
     /**
      * 配置布局ID
      *
-     * @return
+     * @return 布局ID
      */
     abstract protected int getLayoutId();
 
@@ -112,7 +112,7 @@ public abstract class BaseDialog {
     /**
      * 设置Dialog中的ViewGroup，此方法不对子Dialog提供
      *
-     * @param viewGroup
+     * @param viewGroup 组件容器
      */
     private void setViewGroup(ViewGroup viewGroup) {
         this.viewGroup = viewGroup;
@@ -137,7 +137,7 @@ public abstract class BaseDialog {
      * <p/>
      * 位置参数
      *
-     * @return
+     * @return 返回位置
      */
     protected int getGravity() {
         return mGravity;
@@ -162,7 +162,7 @@ public abstract class BaseDialog {
     /**
      * 创建并显示Dialog
      *
-     * @param viewGroup
+     * @param viewGroup 主容器
      */
     public void showDialog(ViewGroup viewGroup) {
         // 如果Dialog没有创建，则先创建Dialog
@@ -221,7 +221,7 @@ public abstract class BaseDialog {
     /**
      * 子类Dialog自定义自己的布局控件
      *
-     * @param view
+     * @param view 返回弹框页面
      */
     abstract protected void showView(View view);
 
@@ -295,7 +295,7 @@ public abstract class BaseDialog {
     /**
      * Dialog是否显示
      *
-     * @return
+     * @return 是否显示弹框
      */
     public boolean isShowing() {
         // 返回Dialog是否在显示

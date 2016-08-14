@@ -164,9 +164,9 @@ public class UriPathUtil {
      * 昨天发现了个bug,如果在4.4上面不用"图片"来选,用"图库"来选,就会无法读取到图片路径,所以只需要加个判断,如果是用旧方式来选,就用旧方式来读,就是如果
      * DocumentsContract.isDocumentUri(context, uri) 返回false的话,就用旧的方式
      *
-     * @param context
-     * @param uri
-     * @return
+     * @param context 上下文
+     * @param uri     uri
+     * @return 返回图片路径
      */
     public static String getPathOld(Context context, Uri uri) {
 

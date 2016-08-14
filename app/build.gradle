@@ -17,6 +17,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    lintOptions {
+        abortOnError false
+        //checkReleaseBuilds false
+    }
 }
 
 dependencies {
@@ -26,5 +30,5 @@ dependencies {
     compile 'com.facebook.fresco:fresco:0.12.0'
     compile 'com.jakewharton:butterknife:6.1.0'
     compile 'de.greenrobot:eventbus:2.4.0'
-    compile project(':lib_photo_picker')
+    compile project(':photopicker')
 }

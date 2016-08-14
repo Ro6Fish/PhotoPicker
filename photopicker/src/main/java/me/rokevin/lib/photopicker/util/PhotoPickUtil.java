@@ -40,7 +40,7 @@ public class PhotoPickUtil {
     /**
      * 设置图片存储的目录
      *
-     * @param dir
+     * @param dir 图片存储目录
      */
     public void setImageDir(String dir) {
 
@@ -55,9 +55,9 @@ public class PhotoPickUtil {
      * 拍照获取图片必须设置个文件路径,裁剪图片时Uri做版本处理
      * 从图库中获取图片做版本处理
      *
-     * @param requestCode
-     * @param resultCode
-     * @param intent
+     * @param requestCode 请求码
+     * @param resultCode  结果码
+     * @param intent      intent
      */
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 
