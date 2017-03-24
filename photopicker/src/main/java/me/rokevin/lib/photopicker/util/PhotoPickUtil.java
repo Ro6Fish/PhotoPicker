@@ -3,12 +3,15 @@ package me.rokevin.lib.photopicker.util;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -79,6 +82,7 @@ public class PhotoPickUtil {
                     Log.e(TAG, "onActivityResult: PHOTO path is " + path);
 
                     startPhotoCrop(Uri.fromFile(new File(path)));
+                    //startPhotoCrop(intent.getData());
 
                 } else {
                     Log.e(TAG, "onActivityResult: photo intent is null!!!!!!");
@@ -102,39 +106,47 @@ public class PhotoPickUtil {
                 if (extras != null) {
 
                     Log.e(TAG, "onActivityResult: extras is not null");
-                    Bitmap photo = extras.getParcelable("data");
-                    //ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    //photo.compress(Bitmap.CompressFormat.JPEG, 75, stream);// (0-100)压缩文件
-                    File fImage = new File(mImagePath);
-
-                    if (fImage.exists()) {
-                        fImage.delete();
-                    }
-
-                    FileOutputStream iStream = null;
-
+                    // Bitmap photo = extras.getParcelable("data");
+                    Bitmap photo = null;
                     try {
-                        fImage.createNewFile();
-                        iStream = new FileOutputStream(fImage);
-                        photo.compress(Bitmap.CompressFormat.PNG, 100, iStream);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    } finally {
+                        photo = BitmapFactory.decodeStream(mActivity.getContentResolver().openInputStream(Uri.fromFile(new File(mImagePath))));
+
+                        //ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        //photo.compress(Bitmap.CompressFormat.JPEG, 75, stream);// (0-100)压缩文件
+                        File fImage = new File(mImagePath);
+
+                        if (fImage.exists()) {
+                            fImage.delete();
+                        }
+
+                        FileOutputStream iStream = null;
 
                         try {
-                            if (null != iStream) {
-                                iStream.close();
-                            }
-
-                        } catch (IOException e) {
+                            fImage.createNewFile();
+                            iStream = new FileOutputStream(fImage);
+                            photo.compress(Bitmap.CompressFormat.PNG, 100, iStream);
+                        } catch (Exception e) {
                             e.printStackTrace();
+                        } finally {
+
+                            try {
+                                if (null != iStream) {
+                                    iStream.close();
+                                }
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
-                    }
 
-                    Uri uri = Uri.fromFile(fImage);
+                        Uri uri = Uri.fromFile(fImage);
 
-                    if (mOnPhotoCropListener != null) {
-                        mOnPhotoCropListener.onFinish(uri);
+                        if (mOnPhotoCropListener != null) {
+                            mOnPhotoCropListener.onFinish(uri);
+                        }
+
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
                     }
 
                 } else {
@@ -164,7 +176,7 @@ public class PhotoPickUtil {
      */
     public void getRandomFileName() {
 
-        mFileName = System.currentTimeMillis() / 1000 + ".jpg";
+        mFileName = System.currentTimeMillis() + ".jpg";
         mImagePath = mImageDir + mFileName;
     }
 
@@ -192,6 +204,9 @@ public class PhotoPickUtil {
         mActivity.startActivityForResult(intent, PHOTO);
     }
 
+    private File cropFile = new File(Environment.getExternalStorageDirectory(), "faceImage_temp.jpg");
+    private Uri imageCropUri = Uri.fromFile(cropFile);
+
     public void startPhotoCrop(Uri uri) {
 
         // clearAvatarPath();
@@ -202,6 +217,8 @@ public class PhotoPickUtil {
          */
 
         Log.e(TAG, "startPhotoCrop: uri:" + uri);
+        Log.e(TAG, "startPhotoCrop: mImagePath:" + mImagePath);
+        Log.e(TAG, "cropFile: cropFile:" + cropFile.getAbsolutePath());
 
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(uri, "image/*");
@@ -209,15 +226,24 @@ public class PhotoPickUtil {
         intent.putExtra("crop", "true");
 
         // aspectX aspectY 是宽高的比例
-        intent.putExtra("aspectX", 1);
-        intent.putExtra("aspectY", 1);
+//        intent.putExtra("aspectX", 2);
+//        intent.putExtra("aspectY", 1);
 
         // outputX,outputY 是剪裁图片的宽高
-        intent.putExtra("outputX", 300);
-        intent.putExtra("outputY", 300);
-        intent.putExtra("return-data", true);
+//        intent.putExtra("outputX", 601);
+//        intent.putExtra("outputY", 602);
+
+        // 小图片可以
+//        intent.putExtra("outputX", 150);
+//        intent.putExtra("outputY", 150);
+//        intent.putExtra("return-data", true);
+
+        intent.putExtra("return-data", false); // 通过Intent中的data来传递，当数据过大，即超过1M（经测试，这个数值在不同手机还不一样）时就崩了！！！！
         intent.putExtra("noFaceDetection", true);
-        // Uri uritempFile = Uri.parse("file://" + "/" + Environment.getExternalStorageDirectory().getPath() + "/" + "small.jpg");
+
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(mImagePath)));
+        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+
         // intent.putExtra(MediaStore.EXTRA_OUTPUT, uritempFile);
         mActivity.startActivityForResult(intent, CROP);
     }

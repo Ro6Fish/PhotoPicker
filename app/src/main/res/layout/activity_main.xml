@@ -7,13 +7,14 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin">
 
-    <com.facebook.drawee.view.SimpleDraweeView
+    <com.facebook.drawee.view.SimpleDraweeView xmlns:fresco="http://schemas.android.com/apk/res-auto"
         android:id="@+id/sdv_photo"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_centerHorizontal="true"
         android:background="@color/colorPrimary"
-        android:clickable="true" />
+        android:clickable="true"
+        fresco:actualImageScaleType="fitCenter" />
 
     <Button
         android:id="@+id/btn_clear"

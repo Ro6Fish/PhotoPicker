@@ -31,14 +31,19 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         initDialog();
 
+        mPhotoPickUtil.setImageDir(SDUtil.getSDPath() + "/ABABAAB/");
         mPhotoPickUtil.setOnPhotoCropListener(new PhotoPickUtil.OnPhotoCropListener() {
             @Override
             public void onFinish(Uri uri) {
+
+                // 修改过图片先走上传图片接口,在执行更新用户信息接口
+                String imageUri = uri.getPath();
+
+                Log.e("Main", "mImageUri:" + imageUri);
+
                 sdvPhoto.setImageURI(uri);
             }
         });
-
-        SDUtil.initFileDir();
     }
 
     @Override

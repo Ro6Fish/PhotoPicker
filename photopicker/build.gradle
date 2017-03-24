@@ -11,7 +11,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 22
         versionCode 1
-        versionName "1.0"
+        versionName "2.0"
     }
     buildTypes {
         release {
@@ -35,7 +35,7 @@ def gitUrl = 'git@github.com:Ro6Fish/PhotoPicker.git'   // Git仓库的url
 group = "me.rokevin.photopicker"            // Maven Group ID for the artifact，一般填你唯一的包名
 // 这个version是区分library版本的，因此当我们需要更新library时记得修改这个version
 // 这个version影响后面的引用
-version = "0.0.1"
+version = "0.2.0"
 
 install {
     repositories.mavenInstaller {
