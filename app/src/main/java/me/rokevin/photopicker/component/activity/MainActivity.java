@@ -36,6 +36,10 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onFinish(Uri uri) {
 
+                if (uri == null) {
+                    return;
+                }
+
                 // 修改过图片先走上传图片接口,在执行更新用户信息接口
                 String imageUri = uri.getPath();
 
@@ -44,6 +48,8 @@ public class MainActivity extends BaseActivity {
                 sdvPhoto.setImageURI(uri);
             }
         });
+
+        mPhotoPickUtil.disableCrop();
     }
 
     @Override

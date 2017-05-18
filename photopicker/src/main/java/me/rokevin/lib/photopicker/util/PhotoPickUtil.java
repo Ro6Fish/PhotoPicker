@@ -34,10 +34,26 @@ public class PhotoPickUtil {
 
     private String mFileName;
 
+    private boolean isCrop = true;
+
     public PhotoPickUtil(Activity activity) {
 
         mActivity = activity;
         setImageDir(SDUtil.getSDPath() + "/AAA/");
+    }
+
+    public void disableCrop() {
+
+        isCrop = false;
+    }
+
+    public void enableCrop() {
+
+        isCrop = true;
+    }
+
+    public boolean isCrop() {
+        return isCrop;
     }
 
     /**
@@ -68,25 +84,59 @@ public class PhotoPickUtil {
 
             case CAMERA:// 当选择拍照时调用
 
-                startPhotoCrop(Uri.fromFile(new File(mImagePath)));
+                if (isCrop) {
+
+                    startPhotoCrop(Uri.fromFile(new File(mImagePath)));
+
+                } else {
+
+                    Uri uri = Uri.fromFile(new File(mImagePath));
+
+                    if (mOnPhotoCropListener != null) {
+                        mOnPhotoCropListener.onFinish(uri);
+                    }
+                }
+
                 break;
 
             case PHOTO:// 当选择从本地获取图片时
 
-                // 做非空判断，想重新剪裁的时候便不会报异常，下同
-                if (intent != null) {
-                    Log.e(TAG, "onActivityResult: photo intent is not null");
+                if (isCrop) {
 
-                    String path = UriPathUtil.getPath(mActivity, intent.getData());
+                    // 做非空判断，想重新剪裁的时候便不会报异常，下同
+                    if (intent != null) {
+                        Log.e(TAG, "onActivityResult: photo intent is not null");
 
-                    Log.e(TAG, "onActivityResult: PHOTO path is " + path);
+                        String path = UriPathUtil.getPath(mActivity, intent.getData());
 
-                    startPhotoCrop(Uri.fromFile(new File(path)));
-                    //startPhotoCrop(intent.getData());
+                        Log.e(TAG, "onActivityResult: PHOTO path is " + path);
+
+                        startPhotoCrop(Uri.fromFile(new File(path)));
+                        //startPhotoCrop(intent.getData());
+
+                    } else {
+                        Log.e(TAG, "onActivityResult: photo intent is null!!!!!!");
+                    }
 
                 } else {
-                    Log.e(TAG, "onActivityResult: photo intent is null!!!!!!");
+
+                    // 做非空判断，想重新剪裁的时候便不会报异常，下同
+                    if (intent != null) {
+                        Log.e(TAG, "onActivityResult: photo intent is not null");
+
+                        String path = UriPathUtil.getPath(mActivity, intent.getData());
+
+                        Log.e(TAG, "onActivityResult: PHOTO path is " + path);
+
+                        if (mOnPhotoCropListener != null) {
+                            mOnPhotoCropListener.onFinish(Uri.fromFile(new File(path)));
+                        }
+
+                    } else {
+                        Log.e(TAG, "onActivityResult: photo intent is null!!!!!!");
+                    }
                 }
+
                 break;
 
             case CROP:// 返回的结果
