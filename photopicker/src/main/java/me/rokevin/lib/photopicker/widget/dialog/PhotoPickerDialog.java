@@ -3,6 +3,7 @@ package me.rokevin.lib.photopicker.widget.dialog;
 import android.content.Context;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 
 import me.rokevin.lib.photopicker.R;
 import me.rokevin.lib.photopicker.util.Util;
@@ -32,9 +33,18 @@ public class PhotoPickerDialog extends BaseDialog {
     @Override
     protected void showView(View view) {
 
+        RelativeLayout rlMain = (RelativeLayout) view.findViewById(R.id.rl_main);
         Button btnCamera = (Button) view.findViewById(R.id.btn_camera);
         Button btnGallry = (Button) view.findViewById(R.id.btn_gallery);
         Button btnCancel = (Button) view.findViewById(R.id.btn_cancel);
+
+        rlMain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                cancel();
+            }
+        });
 
         btnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
