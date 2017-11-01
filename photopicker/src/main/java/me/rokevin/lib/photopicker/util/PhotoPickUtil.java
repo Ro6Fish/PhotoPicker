@@ -8,7 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
+import android.text.TextUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,7 +24,7 @@ public class PhotoPickUtil {
 
     public static final int CAMERA = 1; // 拍照
     public static final int PHOTO = 2;  // 从相册中选择
-    public static final int CROP = 3;   // 结果
+    public static final int CROP = 3;   // 剪切结果
 
     public String mImageDir;
     public String mImagePath;
@@ -105,35 +105,35 @@ public class PhotoPickUtil {
 
                     // 做非空判断，想重新剪裁的时候便不会报异常，下同
                     if (intent != null) {
-                        Log.e(TAG, "onActivityResult: photo intent is not null");
+//                        Log.e(TAG, "onActivityResult: photo intent is not null");
 
                         String path = UriPathUtil.getPath(mActivity, intent.getData());
 
-                        Log.e(TAG, "onActivityResult: PHOTO path is " + path);
+//                        Log.e(TAG, "onActivityResult: PHOTO path is " + path);
 
                         startPhotoCrop(Uri.fromFile(new File(path)));
                         //startPhotoCrop(intent.getData());
 
                     } else {
-                        Log.e(TAG, "onActivityResult: photo intent is null!!!!!!");
+//                        Log.e(TAG, "onActivityResult: photo intent is null!!!!!!");
                     }
 
                 } else {
 
                     // 做非空判断，想重新剪裁的时候便不会报异常，下同
                     if (intent != null) {
-                        Log.e(TAG, "onActivityResult: photo intent is not null");
+//                        Log.e(TAG, "onActivityResult: photo intent is not null");
 
                         String path = UriPathUtil.getPath(mActivity, intent.getData());
 
-                        Log.e(TAG, "onActivityResult: PHOTO path is " + path);
+//                        Log.e(TAG, "onActivityResult: PHOTO path is " + path);
 
                         if (mOnPhotoCropListener != null) {
                             mOnPhotoCropListener.onFinish(Uri.fromFile(new File(path)));
                         }
 
                     } else {
-                        Log.e(TAG, "onActivityResult: photo intent is null!!!!!!");
+//                        Log.e(TAG, "onActivityResult: photo intent is null!!!!!!");
                     }
                 }
 
@@ -141,21 +141,30 @@ public class PhotoPickUtil {
 
             case CROP:// 返回的结果
 
-                if (null == intent) {
-                    Log.e(TAG, "onActivityResult: crop intent is null!!!!!!");
-                    return;
+                Uri data = null;
+
+                if (null == intent || intent.getData() == null) {
+
+//                    Log.e(TAG, "onActivityResult: crop intent is null!!!!!!");
+
+                    if (!TextUtils.isEmpty(mImagePath)) {
+
+                        data = Uri.fromFile(new File(mImagePath));
+                    }
+
+                } else {
+
+                    data = intent.getData();
                 }
 
-                Uri data = intent.getData();
-
-                Log.e(TAG, "onActivityResult: uri is " + data);
-                Log.e(TAG, "onActivityResult: crop intent is not null");
+//                Log.e(TAG, "onActivityResult: uri is " + data);
+//                Log.e(TAG, "onActivityResult: crop intent is not null");
 
                 Bundle extras = intent.getExtras();
 
-                if (extras != null) {
+                if (data != null) {
 
-                    Log.e(TAG, "onActivityResult: extras is not null");
+//                    Log.e(TAG, "onActivityResult: extras is not null");
                     // Bitmap photo = extras.getParcelable("data");
                     Bitmap photo = null;
                     try {
@@ -201,7 +210,7 @@ public class PhotoPickUtil {
 
                 } else {
 
-                    Log.e(TAG, "onActivityResult: extras is null!!!!!!");
+//                    Log.e(TAG, "onActivityResult: extras is null!!!!!!");
 
                     if (mCurType == CAMERA) {
 
@@ -257,6 +266,11 @@ public class PhotoPickUtil {
     private File cropFile = new File(Environment.getExternalStorageDirectory(), "faceImage_temp.jpg");
     private Uri imageCropUri = Uri.fromFile(cropFile);
 
+    /**
+     * return-data 设置成false是
+     *
+     * @param uri
+     */
     public void startPhotoCrop(Uri uri) {
 
         // clearAvatarPath();
@@ -266,9 +280,9 @@ public class PhotoPickUtil {
          * 图片:path获取,uri处理
          */
 
-        Log.e(TAG, "startPhotoCrop: uri:" + uri);
-        Log.e(TAG, "startPhotoCrop: mImagePath:" + mImagePath);
-        Log.e(TAG, "cropFile: cropFile:" + cropFile.getAbsolutePath());
+//        Log.e(TAG, "startPhotoCrop: uri:" + uri);
+//        Log.e(TAG, "startPhotoCrop: mImagePath:" + mImagePath);
+//        Log.e(TAG, "cropFile: cropFile:" + cropFile.getAbsolutePath());
 
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(uri, "image/*");
@@ -276,12 +290,12 @@ public class PhotoPickUtil {
         intent.putExtra("crop", "true");
 
         // aspectX aspectY 是宽高的比例
-//        intent.putExtra("aspectX", 2);
+//        intent.putExtra("aspectX", 1);
 //        intent.putExtra("aspectY", 1);
 
         // outputX,outputY 是剪裁图片的宽高
-//        intent.putExtra("outputX", 601);
-//        intent.putExtra("outputY", 602);
+        intent.putExtra("outputX", 600);
+        intent.putExtra("outputY", 600);
 
         // 小图片可以
 //        intent.putExtra("outputX", 150);
@@ -291,6 +305,7 @@ public class PhotoPickUtil {
         intent.putExtra("return-data", false); // 通过Intent中的data来传递，当数据过大，即超过1M（经测试，这个数值在不同手机还不一样）时就崩了！！！！
         intent.putExtra("noFaceDetection", true);
 
+//        Log.e(TAG, "startPhotoCrop:mImagePath:" + mImagePath);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(mImagePath)));
         intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
 

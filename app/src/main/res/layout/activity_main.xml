@@ -14,7 +14,7 @@
         android:layout_centerHorizontal="true"
         android:background="@color/colorPrimary"
         android:clickable="true"
-        fresco:actualImageScaleType="fitCenter" />
+        fresco:actualImageScaleType="fitXY" />
 
     <Button
         android:id="@+id/btn_clear"

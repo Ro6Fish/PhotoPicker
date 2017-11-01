@@ -31,7 +31,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         initDialog();
 
-        mPhotoPickUtil.setImageDir(SDUtil.getSDPath() + "/ABABAAB/");
+        mPhotoPickUtil.setImageDir(SDUtil.getSDPath() + "/AAA/");
         mPhotoPickUtil.setOnPhotoCropListener(new PhotoPickUtil.OnPhotoCropListener() {
             @Override
             public void onFinish(Uri uri) {
@@ -49,7 +49,7 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        mPhotoPickUtil.disableCrop();
+//        mPhotoPickUtil.disableCrop();
     }
 
     @Override
@@ -85,5 +85,7 @@ public class MainActivity extends BaseActivity {
     public void doClear() {
 
         SDUtil.clear(SDUtil.getSDPath() + "/AAA/");
+
+        sdvPhoto.setImageURI(Uri.parse(""));
     }
 }
