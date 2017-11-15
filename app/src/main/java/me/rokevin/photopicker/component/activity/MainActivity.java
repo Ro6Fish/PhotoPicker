@@ -11,6 +11,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import me.rokevin.lib.photopicker.util.PhotoPickUtil;
 import me.rokevin.lib.photopicker.util.SDUtil;
+import me.rokevin.lib.photopicker.util.Util;
 import me.rokevin.lib.photopicker.widget.dialog.PhotoPickerDialog;
 import me.rokevin.photopicker.R;
 
@@ -48,6 +49,11 @@ public class MainActivity extends BaseActivity {
                 sdvPhoto.setImageURI(uri);
             }
         });
+
+        int width = Util.getScreenWidth(mContext);
+        int height = (int) (width / sdvPhoto.getAspectRatio());
+        Log.e(TAG, "width:" + width + "  height:" + height);
+        mPhotoPickUtil.setCropRect(width, height);
 
 //        mPhotoPickUtil.disableCrop();
     }

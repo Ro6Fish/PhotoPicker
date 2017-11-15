@@ -36,6 +36,9 @@ public class PhotoPickUtil {
 
     private boolean isCrop = true;
 
+    private int mWidth = 600;
+    private int mHeight = 600;
+
     public PhotoPickUtil(Activity activity) {
 
         mActivity = activity;
@@ -267,6 +270,22 @@ public class PhotoPickUtil {
     private Uri imageCropUri = Uri.fromFile(cropFile);
 
     /**
+     * 设置裁剪后图片的大小
+     *
+     * @param x
+     * @param y
+     */
+    public void setCropRect(int x, int y) {
+
+        if (x <= 0 || y <= 0) {
+            return;
+        }
+
+        mWidth = x;
+        mHeight = y;
+    }
+
+    /**
      * return-data 设置成false是
      *
      * @param uri
@@ -294,8 +313,8 @@ public class PhotoPickUtil {
 //        intent.putExtra("aspectY", 1);
 
         // outputX,outputY 是剪裁图片的宽高
-        intent.putExtra("outputX", 600);
-        intent.putExtra("outputY", 600);
+        intent.putExtra("outputX", mWidth);
+        intent.putExtra("outputY", mHeight);
 
         // 小图片可以
 //        intent.putExtra("outputX", 150);
