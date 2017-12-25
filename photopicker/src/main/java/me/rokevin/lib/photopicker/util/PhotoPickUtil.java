@@ -5,15 +5,16 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by luokaiwen on 16/6/24.
@@ -93,11 +94,15 @@ public class PhotoPickUtil {
 
                 } else {
 
-                    Uri uri = Uri.fromFile(new File(mImagePath));
+                    String path = mImagePath;
 
-                    if (mOnPhotoCropListener != null) {
-                        mOnPhotoCropListener.onFinish(uri);
-                    }
+                    resize(path);
+
+//                    Uri uri = Uri.fromFile(new File(mImagePath));
+//
+//                    if (mOnPhotoCropListener != null) {
+//                        mOnPhotoCropListener.onFinish(uri);
+//                    }
                 }
 
                 break;
@@ -131,9 +136,13 @@ public class PhotoPickUtil {
 
 //                        Log.e(TAG, "onActivityResult: PHOTO path is " + path);
 
-                        if (mOnPhotoCropListener != null) {
-                            mOnPhotoCropListener.onFinish(Uri.fromFile(new File(path)));
-                        }
+//                        if (mOnPhotoCropListener != null) {
+//                            mOnPhotoCropListener.onFinish(Uri.fromFile(new File(path)));
+//                        }
+
+                        copyFile(path, mImagePath);
+
+                        resize(mImagePath);
 
                     } else {
 //                        Log.e(TAG, "onActivityResult: photo intent is null!!!!!!");
@@ -163,8 +172,6 @@ public class PhotoPickUtil {
 //                Log.e(TAG, "onActivityResult: uri is " + data);
 //                Log.e(TAG, "onActivityResult: crop intent is not null");
 
-                Bundle extras = intent.getExtras();
-
                 if (data != null) {
 
 //                    Log.e(TAG, "onActivityResult: extras is not null");
@@ -186,7 +193,7 @@ public class PhotoPickUtil {
                         try {
                             fImage.createNewFile();
                             iStream = new FileOutputStream(fImage);
-                            photo.compress(Bitmap.CompressFormat.PNG, 100, iStream);
+                            photo.compress(Bitmap.CompressFormat.JPEG, 80, iStream);
                         } catch (Exception e) {
                             e.printStackTrace();
                         } finally {
@@ -313,8 +320,8 @@ public class PhotoPickUtil {
 //        intent.putExtra("aspectY", 1);
 
         // outputX,outputY 是剪裁图片的宽高
-        intent.putExtra("outputX", mWidth);
-        intent.putExtra("outputY", mHeight);
+//        intent.putExtra("outputX", mWidth);
+//        intent.putExtra("outputY", mHeight);
 
         // 小图片可以
 //        intent.putExtra("outputX", 150);
@@ -330,6 +337,178 @@ public class PhotoPickUtil {
 
         // intent.putExtra(MediaStore.EXTRA_OUTPUT, uritempFile);
         mActivity.startActivityForResult(intent, CROP);
+    }
+
+    public void resize(String path) {
+
+        // 重设置尺寸
+
+        // 压缩
+
+        Bitmap photo = null;
+        try {
+
+            // photo = BitmapFactory.decodeStream(mActivity.getContentResolver().openInputStream(Uri.fromFile(new File(path))));
+
+            photo = resizeBitmap(path, 1080, 1920);
+
+            //ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            //photo.compress(Bitmap.CompressFormat.JPEG, 75, stream);// (0-100)压缩文件
+            File fImage = new File(path);
+
+            if (fImage.exists()) {
+                fImage.delete();
+            }
+
+            FileOutputStream iStream = null;
+
+            try {
+                fImage.createNewFile();
+                iStream = new FileOutputStream(fImage);
+                photo.compress(Bitmap.CompressFormat.JPEG, 40, iStream);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+
+                try {
+                    if (null != iStream) {
+                        iStream.close();
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            Uri uri = Uri.fromFile(fImage);
+
+            if (mOnPhotoCropListener != null) {
+                mOnPhotoCropListener.onFinish(uri);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            if (mOnPhotoCropListener != null) {
+                mOnPhotoCropListener.onFinish(null);
+            }
+        }
+    }
+
+    public static Bitmap resizeBitmap(String filePath, int targetWidth, int targetHeight) {
+
+        Bitmap bitMapImage = null;
+        // First, get the dimensions of the image
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filePath, options);
+        double sampleSize = 0;
+        // Only scale if we need to
+        // (16384 buffer for img processing)
+        Boolean scaleByHeight = Math.abs(options.outHeight - targetHeight) >= Math
+                .abs(options.outWidth - targetWidth);
+        if (options.outHeight * options.outWidth * 2 >= 1638) {
+            // Load, scaling to smallest power of 2 that'll get it <= desired
+            // dimensions
+            sampleSize = scaleByHeight ? options.outHeight / targetHeight
+                    : options.outWidth / targetWidth;
+            sampleSize = (int) Math.pow(2d,
+                    Math.floor(Math.log(sampleSize) / Math.log(2d)));
+        }
+        // Do the actual decoding
+        options.inJustDecodeBounds = false;
+        options.inTempStorage = new byte[128];
+        while (true) {
+            try {
+                options.inSampleSize = (int) sampleSize;
+                bitMapImage = BitmapFactory.decodeFile(filePath, options);
+                break;
+            } catch (Exception ex) {
+                try {
+                    sampleSize = sampleSize * 2;
+                } catch (Exception ex1) {
+                }
+            }
+        }
+        return bitMapImage;
+    }
+
+    /**
+     * 复制单个文件
+     *
+     * @param oldPath String 原文件路径 如：c:/fqf.txt
+     * @param newPath String 复制后路径 如：f:/fqf.txt
+     * @return boolean
+     */
+    public void copyFile(String oldPath, String newPath) {
+        try {
+            int bytesum = 0;
+            int byteread = 0;
+            File oldfile = new File(oldPath);
+            if (oldfile.exists()) { //文件存在时
+                InputStream inStream = new FileInputStream(oldPath); //读入原文件
+                FileOutputStream fs = new FileOutputStream(newPath);
+                byte[] buffer = new byte[1444];
+                int length;
+                while ((byteread = inStream.read(buffer)) != -1) {
+                    bytesum += byteread; //字节数 文件大小
+                    System.out.println(bytesum);
+                    fs.write(buffer, 0, byteread);
+                }
+                inStream.close();
+            }
+        } catch (Exception e) {
+            System.out.println("复制单个文件操作出错");
+            e.printStackTrace();
+
+        }
+
+    }
+
+    /**
+     * 复制整个文件夹内容
+     *
+     * @param oldPath String 原文件路径 如：c:/fqf
+     * @param newPath String 复制后路径 如：f:/fqf/ff
+     * @return boolean
+     */
+    public void copyFolder(String oldPath, String newPath) {
+
+        try {
+            (new File(newPath)).mkdirs(); //如果文件夹不存在 则建立新文件夹
+            File a = new File(oldPath);
+            String[] file = a.list();
+            File temp = null;
+            for (int i = 0; i < file.length; i++) {
+                if (oldPath.endsWith(File.separator)) {
+                    temp = new File(oldPath + file[i]);
+                } else {
+                    temp = new File(oldPath + File.separator + file[i]);
+                }
+
+                if (temp.isFile()) {
+                    FileInputStream input = new FileInputStream(temp);
+                    FileOutputStream output = new FileOutputStream(newPath + "/" +
+                            (temp.getName()).toString());
+                    byte[] b = new byte[1024 * 5];
+                    int len;
+                    while ((len = input.read(b)) != -1) {
+                        output.write(b, 0, len);
+                    }
+                    output.flush();
+                    output.close();
+                    input.close();
+                }
+                if (temp.isDirectory()) {//如果是子文件夹
+                    copyFolder(oldPath + "/" + file[i], newPath + "/" + file[i]);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("复制整个文件夹内容操作出错");
+            e.printStackTrace();
+
+        }
+
     }
 
     private OnPhotoCropListener mOnPhotoCropListener;

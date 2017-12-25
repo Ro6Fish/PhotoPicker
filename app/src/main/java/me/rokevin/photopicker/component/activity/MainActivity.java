@@ -53,9 +53,9 @@ public class MainActivity extends BaseActivity {
         int width = Util.getScreenWidth(mContext);
         int height = (int) (width / sdvPhoto.getAspectRatio());
         Log.e(TAG, "width:" + width + "  height:" + height);
-        mPhotoPickUtil.setCropRect(width, height);
+//        mPhotoPickUtil.setCropRect(width, height);
 
-//        mPhotoPickUtil.disableCrop();
+        mPhotoPickUtil.disableCrop();
     }
 
     @Override
