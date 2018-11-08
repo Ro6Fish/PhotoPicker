@@ -27,8 +27,8 @@
     </style>
 
     <style name="AnimPhotoPicker" parent="android:Animation">
-        <item name="@android:windowEnterAnimation">@anim/dialog_photo_picker_enter</item>
-        <item name="@android:windowExitAnimation">@anim/dialog_photo_picker_exit</item>
+        <item name="android:windowEnterAnimation">@anim/dialog_photo_picker_enter</item>
+        <item name="android:windowExitAnimation">@anim/dialog_photo_picker_exit</item>
     </style>
 
 </resources>
